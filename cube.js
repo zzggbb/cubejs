@@ -1,7 +1,7 @@
 $(document).ready(function () {
     cfg = {
-        "width" : 512,
-        "height" : 512,
+        "width" : 640,
+        "height" : 640,
         "grid_bg": "#ffffff",
         "grid_fg": "#6e7b87",
         "grid_geo" : 16
