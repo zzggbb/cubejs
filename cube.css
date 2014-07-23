@@ -1,6 +1,14 @@
+@font-face {
+    font-family: "pixel";
+    src: url(pixel.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 * {
-    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
-    font-size: 14px;
+    font-family: "pixel"; 
+    font-size: 10px;
+    font-smooth: never;
+    -webkit-font-smoothing : none;
 }
 html, body {
     width:100%;
@@ -8,16 +16,16 @@ html, body {
     margin:0px;
 }
 #content {
-    padding: 10 0 10 10px;
+    padding: 10 0 0 10px;
     background-color:394046;
 }
-
 #control {
     color:#ffffff;
     padding:10 0 10 0px;
     background-color: #394046;
 }
-#control, #canvas-wrap {
+
+#colors, #canvas-wrap,#console {
     display: flex;
     -webkit-box-direction: normal;
     -webkit-box-orient: horizontal;
@@ -28,12 +36,40 @@ html, body {
     align-items: center;
 }
 #control > div {
-    padding: 3px;
+    padding: 5px;
+    height: 50px;
+}
+#color {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+}
+#colornum {
+    background-color: #394046;
+    padding: 6px 4px 3px 5px;
+    display: inline-block;
+    border-radius: 50%;
+}
+.center-block {
+    text-align: center;
+}
+.center-block:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align:middle;
+}
+.center {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 #pos {
     background-color: #f95168;
     text-align: center;
+    vertical-align:middle;
+    line-height: 50px;
 }
 #colors {
 }

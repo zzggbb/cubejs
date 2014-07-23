@@ -1,68 +1,110 @@
+var cfg = {
+    width  : 640,
+    height : 640,
+    fg     : "#ffffff",
+    bg     : "#394046",
+    grid_bg: "#ffffff",
+    grid_fg: "#6e7b87",
+    geo    : 16
+}
+
+var colors = [
+    "ffffff","6e7b87","ae163c","2a8e6a",
+    "dbab3b","1b8edb","9d2d8f","31adc9"
+]
+var cvs,ctx,down,
+    mouse_down,mouse_pix,round,setcolor
+
 $(document).ready(function () {
-    cfg = {
-        "width" : 640,
-        "height" : 640,
-        "grid_bg": "#ffffff",
-        "grid_fg": "#6e7b87",
-        "grid_geo" : 16
-    }
-    var cvs = document.getElementById('canvas')
-    var ctx = cvs.getContext('2d');
-    setup(ctx, cfg);
-    $( "#canvas" ).mousemove(function(  event ) {
-        var pos = mouse_pos(cvs,event);
-        var round = function( pos ){
-            return Math.ceil(pos/cfg.grid_geo) * cfg.grid_geo;
-        }
 
-        var pix = { x: round(pos.x), y: round(pos.y) };
-        $('#pos').html( "real: "+pos.x+", "+pos.y+" pixel: "+pix.y+","+pix.y );
-    });
-    $("#canvas").mousedown(function (event) {
-        var round = function( pos ){
-            return Math.ceil(pos/cfg.grid_geo) * cfg.grid_geo;
-        }
-
-        var pos = mouse_pos(cvs,event);
-        var pix = { x: round(pos.x), y: round(pos.y) };
-        console.log(pix);
-        ctx.fillStyle = "#2a8e6a";
-        ctx.fillRect(pix.x-cfg.grid_geo,pix.y-cfg.grid_geo,cfg.grid_geo,cfg.grid_geo);
-    });
-});
-
-function controls() {
+    cvs = $("#canvas")[0];
+    ctx = cvs.getContext("2d");
+    down = false;
     
-}
-function draw(x,y) {
+    $.extend(cvs,{width: cfg.width,height:cfg.height});
     
-}
-function mouse_pos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
-
-function setup(ctx,cfg) {
-    console.log("initializing window", cfg.width, "x", cfg.height);
-    ctx.canvas.width = cfg.width;
-    ctx.canvas.height = cfg.height; 
-    // draw background
     ctx.fillStyle = cfg.grid_bg;
     ctx.fillRect(0,0,cfg.width,cfg.height);
 
-    // draw gridlines
+    // draw the grid
     ctx.strokeStyle=cfg.grid_fg;
-    for (var x = 0; x < cfg.width; x+=cfg.grid_geo) {
-        ctx.moveTo(x,0);
-        ctx.lineTo(x,cfg.height);
-    }
-    for (var y = 0; y < cfg.height; y+=cfg.grid_geo) {
-        ctx.moveTo(0,y);
-        ctx.lineTo(cfg.width,y);
+    for (var i = 0; i < cfg.width; i+=cfg.geo) {
+        ctx.moveTo(i,0);
+        ctx.lineTo(i,cfg.height);
+        ctx.moveTo(0,i);
+        ctx.lineTo(cfg.width,i);
     }
     ctx.stroke();
     
-}
+
+    // utility functions
+
+    mouse_pos = function (evt) {
+        rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX-rect.left,
+            y: evt.clientY-rect.top
+        }
+    }
+    mouse_pix = function (pos) {
+        return {
+            x: round(pos.x)-cfg.geo,
+            y: round(pos.y)-cfg.geo
+        }
+    }
+    round = function (n) {
+        return Math.ceil(n/cfg.geo) * cfg.geo;
+    }
+    setcolor = function(color) {
+        cfg.fg = "#" + color;
+    
+    }
+    addcolor = function(color) {
+        $("#colors").append(
+            $("<div></div>")
+            .attr({
+                "id": "color",
+                "class": "center-block"
+            })
+            .css("background-color",color)
+            .append(
+                $("<div></div>")
+                .attr("id","colornum")
+                .text(colors.indexOf(color) + 1)
+            )
+        );
+    }
+    
+    _.each(colors,addcolor);
+
+    $("#canvas")
+    .mousemove(function (event) {
+        var pix = mouse_pix(mouse_pos(event)); 
+        //$("#pos").html("["+pix.x+","+pix.y+"]");
+        if (down) {
+            ctx.fillStyle = cfg.fg;
+            ctx.fillRect(pix.x,pix.y,cfg.geo,cfg.geo);
+        } 
+    })
+    .mousedown(function (event) {
+        down = true;
+        var pix = mouse_pix(mouse_pos(event));
+        ctx.fillStyle = cfg.fg;
+        ctx.fillRect(pix.x,pix.y,cfg.geo,cfg.geo);
+    });
+    $(window)
+    .mouseup(function () {
+        down = false;
+        ctx.save()
+    });
+    
+    $(document).keypress(function(event){
+        // offset, '0' key is 48, '1' is 49, etc
+        key = event.which - 48 - 1;
+        if (_.contains(_.range(10), key)) {
+            setcolor(colors[key]);
+            console.log("num key pressed", key);
+
+        }
+    });
+});
