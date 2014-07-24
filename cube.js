@@ -1,6 +1,6 @@
 var cfg = {
-    width  : 640,
-    height : 640,
+    width  : 512,
+    height : 512,
     fg     : "#ffffff",
     bg     : "#394046",
     grid_bg: "#ffffff",
